@@ -1,0 +1,33 @@
+
+--- powershell to validate and check all your servers landscape current build versions and report patched and unpatched ones
+New-PSSession -ComputerName SERVERNAME
+
+$pss = Get-PSSession 
+
+Invoke-Command -Session $pss {
+
+$ver="18.7.0004.0"
+$findver=(dir C:\WINDOWS\system32\msoledbsql.dll).VersionInfo | Select-Object -expandproperty ProductVersion 
+if ($findver -eq $ver)
+{
+hostname 
+Write-Host "is patched ! " -ForegroundColor Green
+}
+else
+{
+hostname  
+Write-Host "is not patched ! " -ForegroundColor Red
+}
+
+}   
+
+
+-- sample powershell script to patch a specific server and then reboot the windows server
+
+Enter-PSSession -ComputerName SERVERNAME
+cd D:\
+.\msoledbsql.msi /q /Passive
+Restart-Computer –ComputerName SERVERNAME -Force
+
+
+
